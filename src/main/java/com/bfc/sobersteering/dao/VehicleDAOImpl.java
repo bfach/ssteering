@@ -7,75 +7,64 @@ import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.bfc.sobersteering.bean.User;
+import com.bfc.sobersteering.bean.Vehicle;
 
 @Repository
-public class UserDAOImpl implements UserDAO {
-
+public class VehicleDAOImpl implements VehicleDAO{
 	@Autowired
-	private SessionFactory sessionFactory;
+    private SessionFactory sessionFactory;
+ 
 
-	// @Transactional(propagation = Propagation.REQUIRED)
-	public void saveUser(User user) {
+	@Override
+	public void registerVehicle(Vehicle vehicle) {
 		Session session = sessionFactory.openSession();
 		Transaction transaction = null;
-
+		
 		try {
 			transaction = session.beginTransaction();
-			session.merge(user);
-
+			session.merge(vehicle);
+	        
 			transaction.commit();
 		} catch (HibernateException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			transaction.rollback();
-
-		} finally {
+			
+		} finally{
 			session.close();
 		}
+		
 	}
 
-	// @Transactional(propagation = Propagation.REQUIRED)
-	public User findUserByName(String userName) {
+	public Vehicle findVehicleByVIN(String vin) {
 		Session session = sessionFactory.openSession();
-
-		try {
-			return (User) session.get(User.class, userName);
-		} finally {
-			session.close();
-		}
-
-	}
-
-	// @Transactional(propagation = Propagation.REQUIRED)
-	public void deleteUser(User user) {
-		Session session = sessionFactory.openSession();
+		
+        try{
+        	return (Vehicle) session.get(Vehicle.class, vin);
+        }finally{
+        	session.close();
+        }
+ 
+    }
+ 
+	//@Transactional(propagation = Propagation.REQUIRED)
+	public void deleteVehicle(Vehicle vehicle) {
+        Session session = sessionFactory.openSession();
 		Transaction transaction = null;
-
+		
 		try {
 			transaction = session.beginTransaction();
-			session.delete(user);
-
-			transaction.commit();
+			session.delete(vehicle);
+	        transaction.commit();
 		} catch (HibernateException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			transaction.rollback();
-
-		} finally {
+			
+		} finally{
 			session.close();
 		}
 
+	
 	}
-
-	public int retrieveUserId(String username) {
-		final User user = findUserByName(username);
-
-		if (user == null) {
-			throw new IllegalArgumentException("User not registered "
-					+ username);
-		}
-		return user.getId();
-	}
-
 }

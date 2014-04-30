@@ -41,8 +41,9 @@
 	<bean id="DataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
 		destroy-method="close">
 		<property name="driverClass" value="com.mysql.jdbc.Driver" />
-		<property name="jdbcUrl" value="jdbc:mysql://localhost:3306/mbschema" />
+		<property name="jdbcUrl" value="jdbc:mysql://localhost:3306/ssteering" />
 		<property name="user" value="root" />
+		<property name="password" value="password" />
 
 		<!-- these are C3P0 properties -->
 		<property name="acquireIncrement" value="1" />
@@ -56,12 +57,14 @@
 		<property name="dataSource" ref="DataSource" />
         <property name="annotatedClasses">
             <list>
-                <value>com.boogle.marketbuddy.bean.User</value>
-                <value>com.boogle.marketbuddy.bean.Account</value>
-                <value>com.boogle.marketbuddy.bean.Portfolio</value>
-                <value>com.boogle.marketbuddy.bean.Share</value>
-                <value>com.boogle.marketbuddy.bean.Stock</value>
-                <value>com.boogle.marketbuddy.bean.TradeOrder</value>
+                <value>com.bfc.sobersteering.bean.User</value>
+                <value>com.bfc.sobersteering.bean.Account</value>
+                <value>com.bfc.sobersteering.bean.Portfolio</value>
+                <value>com.bfc.sobersteering.bean.Share</value>
+                <value>com.bfc.sobersteering.bean.Stock</value>
+                <value>com.bfc.sobersteering.bean.TradeOrder</value>
+                <value>com.bfc.sobersteering.bean.Vehicle</value>
+                <value>com.bfc.sobersteering.bean.VehicleReport</value>
             </list>
         </property>
         

@@ -12,7 +12,7 @@
 	
 	<appender name="file" class="org.apache.log4j.DailyRollingFileAppender">
       <errorHandler class="org.apache.log4j.helpers.OnlyOnceErrorHandler"/>
-      <param name="file" value="./log/marketbuddy.log"/>
+      <param name="file" value="/var/log/marketbuddy.log"/>
       <param name="Append" value="true"/> 
 
       <!-- Rollover at midnight each day -->
