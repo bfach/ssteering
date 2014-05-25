@@ -9,6 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.GenericGenerator;
+
 @Entity
 @Table(name="vehicles")
 public class Vehicle implements Serializable {
@@ -18,7 +20,7 @@ public class Vehicle implements Serializable {
 	 */
 	private static final long serialVersionUID = -933442164293934954L;
 
-	@Id
+	//@Id
 	private String vin;
 	
 	public String getVin() {
@@ -29,11 +31,11 @@ public class Vehicle implements Serializable {
 		this.vin = vin;
 	}
 
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
@@ -53,9 +55,13 @@ public class Vehicle implements Serializable {
 		this.year = year;
 	}
 
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "id")
-	private int id;
+//	@GenericGenerator(name="gen",strategy="increment")
+//	@GeneratedValue(generator="gen")
+//	@Column(name = "id", unique = true, nullable = false, precision = 15, scale = 0)
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "vehicle_id", unique = true, nullable = false)
+	private Integer id;
 
 	@Column(name = "model")
 	private String model;

@@ -23,8 +23,8 @@
 		<beans:property name="prefix" value="/WEB-INF/views/" />
 		<beans:property name="suffix" value=".jsp" />
 	</beans:bean>
-
-	<context:component-scan base-package="com.bfc.sobersteering, com.bfc.sobersteering.controller, com.bfc.sobersteering.dao, com.bfc.sobersteering.bean" />
+    
+    <context:component-scan base-package="com.bfc.sobersteering, com.bfc.sobersteering.controller, com.bfc.sobersteering.dao, com.bfc.sobersteering.bean" />
 	<beans:bean
 		class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
 		<beans:property name="defaultContentType" value="text/html" />

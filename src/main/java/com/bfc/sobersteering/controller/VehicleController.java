@@ -1,7 +1,10 @@
 package com.bfc.sobersteering.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,27 +18,27 @@ import com.bfc.sobersteering.dao.VehicleDAO;
 public class VehicleController {
 	@Autowired
 	private VehicleDAO dao;
+	private static final Logger LOG = LoggerFactory.getLogger(VehicleController.class);
 
 	@RequestMapping(value = "/vehicles/{vin}", method = RequestMethod.POST)
 	@ResponseBody
 	public String addVehicle(@PathVariable String vin, @RequestBody Vehicle vehicle) {
-		
-		try {
+		if(dao.findVehicleByVIN(vin) != null){
+			LOG.debug("Vehicle already registered, specifying ID to update content");
 			dao.registerVehicle(vehicle);
-		} catch (Exception e) {
-			return e.getMessage().toString();
+			return "Vehicle " + vehicle.getId() + " content updated";
 		}
-		
-		return "" + vehicle.getId();
+		dao.registerVehicle(vehicle);
+		return "Vehicle with vin " + vin + " added";
 	}
 	
-	@RequestMapping(value = "/users/{vin}", method = RequestMethod.GET)
-	@ResponseBody
+	@RequestMapping(value = "/vehicles/{vin}", method = RequestMethod.GET)
+	@ResponseBody()
 	public Vehicle getVehicle(@PathVariable String vin) {
 		return dao.findVehicleByVIN(vin);
 	}
 
-	@RequestMapping(value = "/users/{vin}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/vehicles/{vin}", method = RequestMethod.DELETE)
 	public void deleteVehicle(@PathVariable String vin) {
 		Vehicle vehicle = dao.findVehicleByVIN(vin);
 		
@@ -46,5 +49,10 @@ public class VehicleController {
 
 		
 		dao.deleteVehicle(vehicle);
+	}
+	
+	@ExceptionHandler(Throwable.class)
+	public void handle(@RequestBody Vehicle vehicle){
+		LOG.error("Error handling request for vehicle with vin " + vehicle.getVin());
 	}
 }

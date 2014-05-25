@@ -11,8 +11,6 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="users")
-//@Table(name="tbl_sky",
-//uniqueConstraints = {@UniqueConstraint(columnNames={"month", "day"})}
 public class User implements Serializable {
 
 	@Override

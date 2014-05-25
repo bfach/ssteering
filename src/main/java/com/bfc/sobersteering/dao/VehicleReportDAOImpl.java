@@ -3,62 +3,48 @@ package com.bfc.sobersteering.dao;
 import java.sql.Timestamp;
 import java.util.List;
 
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.bfc.sobersteering.bean.Vehicle;
 import com.bfc.sobersteering.bean.VehicleReport;
 
 @Repository
 public class VehicleReportDAOImpl implements VehicleReportDAO{
 
-	@Autowired
-    private SessionFactory sessionFactory;
- 
+	@PersistenceContext private EntityManager em;
+
 
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED)
 	public void logReport(VehicleReport report) {
-		Session session = sessionFactory.openSession();
-		Transaction transaction = null;
-		
 		final Timestamp create_ts = new Timestamp(System.currentTimeMillis());
 		report.setCreate_ts(create_ts );
-		
-		try {
-			transaction = session.beginTransaction();
-			session.merge(report);
-	        
-			transaction.commit();
-		} catch (HibernateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			transaction.rollback();
-			
-		} finally{
-			session.close();
-		}
+		em.persist(report);
+		em.flush();
 		
 	}
 	
-	public List<VehicleReport> retrieveReports(Timestamp startTs, Timestamp endTs){
-		Session session = sessionFactory.openSession();
-		
+	public List<VehicleReport> retrieveReports(String vin, Timestamp startTs, Timestamp endTs){
+		List<VehicleReport> result = null;
 		try {
-			Query query = session.createQuery("from VehicleReport as vr where vr.log_ts >= startTs and vr.log_ts <= endTs");
-			@SuppressWarnings("unchecked")
-			List<VehicleReport> reportList = (List<VehicleReport>)query.list();
-			return reportList;
-	    } catch (HibernateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally{
-			session.close();
+			TypedQuery<VehicleReport> query = em.createQuery("select vr from VehicleReport vr where ((vr.log_ts >= ? and vr.log_ts <= ?) OR (vr.create_ts >= ? and vr.create_ts <= ?))", VehicleReport.class);
+//			TypedQuery<VehicleReport> query = em.createQuery("select vr from VehicleReport vr where vr.vin = ? and ((vr.log_ts >= ? and vr.log_ts <= ?) OR (vr.create_ts >= ? and vr.create_ts <= ?))", VehicleReport.class);
+			//query.setParameter(1, vin);
+			query.setParameter(1, startTs);
+			query.setParameter(2, endTs);
+			query.setParameter(3, startTs);
+			query.setParameter(4, endTs);
+			result = query.getResultList();
+		} catch (NoResultException e) {
+		// no role found with the given role name
 		}
-		
-		return null;
+		return result;
 	}
 }
